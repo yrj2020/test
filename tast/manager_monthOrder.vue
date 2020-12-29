@@ -29,9 +29,13 @@
     </div>
     <div class="secondLevelMain">
       <div class="table employeesOrders" v-if="showOrder">
-        <el-collapse>
+        <el-collapse
+          v-model="activeNames"
+          accordion
+          @change="handleChange(activeNames)"
+        >
           <el-collapse-item
-            name="1"
+            :name="index"
             v-for="(item, index) in allUserOrder"
             :key="index"
           >
@@ -52,43 +56,23 @@
                 </div>
               </div>
             </template>
-            <div class="good">
-              <el-table
-                :data="item.goods"
-                width="100%"
-                stripe
-                border
-                style="padding-bottom: 10px"
-                :header-cell-style="{
-                  background: '#eef1fe',
-                  color: '#869bfa',
-                  borderBottom: '1px,solid #869bfa',
-                }"
-              >
-                <el-table-column
-                  type="index"
-                  align="center"
-                  label="序号"
-                  width="50"
-                >
-                </el-table-column>
-                <el-table-column align="left" label="换购商品" prop="goodName">
-                </el-table-column>
-                <el-table-column
-                  align="left"
-                  label="单价(元/件)"
-                  prop="unitPrice"
-                >
-                </el-table-column>
-                <el-table-column align="left" label="数量(件)" prop="count">
-                </el-table-column>
-                <el-table-column
-                  align="left"
-                  label="总价"
-                  prop="singleTotalPrice"
-                >
-                </el-table-column>
-              </el-table>
+            <div style="height: 100%" class="good">
+              <table class="table" style="width: 98%; ">
+                <tr>
+                  <th class="number" style="width:50px;">序号</th>
+                  <th>换购商品</th>
+                  <th>单价(元/件)</th>
+                  <th>数量(件)</th>
+                  <th>总价(元)</th>
+                </tr>
+                <tr v-for="(item2,index2) in item.goods" :key="index2">
+                  <td>{{index2+1}}</td>
+                  <td>{{item2.goodName}}</td>
+                  <td>{{item2.unitPrice}}</td>
+                  <td>{{item2.count}}</td>
+                  <td>{{item2.singleTotalPrice}}</td>
+                </tr>
+              </table>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -207,25 +191,44 @@
 }
 .secondLevelMain .employeesOrders .title,
 .secondLevelMain .employeesOrders .title span {
+  /* color: #869bfa; */
+  color: #535353;
+}
+.secondLevelMain .employeesOrders .title .item {
+  width: 25%;
+}
+.secondLevelMain .employeesOrders .good .table {
+  /* border: 1px #869fab solid; */
+  width: 100%;
+  border-spacing: 0px;
+  /* padding:0px 10px; */
+}
+.secondLevelMain .employeesOrders .good .table th{
+  background-color: rgb(238, 241, 254);
+  padding: 5px 10px;
   color: #869bfa;
+  text-align: center;
 }
-.secondLevelMain .employeesOrders .title .item:not(:last-child) {
+.secondLevelMain .employeesOrders .good .table tr td:first-child
+{
+  border-left: 1px solid #ebeef5;
 }
-.collapse-transition {
-  -webkit-transition: 0s height, 0s padding-top, 0s padding-bottom;
-  transition: 0s height, 0s padding-top, 0s padding-bottom;
+.secondLevelMain .employeesOrders .good .table td{
+  padding: 5px 10px;
+  border-right: 1px solid #ebeef5;
+  border-bottom: 1px solid #ebeef5;
+  text-align: center;
 }
-
-.horizontal-collapse-transition {
-  -webkit-transition: 0s width, 0s padding-left, 0s padding-right;
-  transition: 0s width, 0s padding-left, 0s padding-right;
-}
-
-.horizontal-collapse-transition .el-submenu__title .el-submenu__icon-arrow {
-  -webkit-transition: 0s;
-  transition: 0s;
-  opacity: 0;
-}
+/* .collapse-transition 
+    -webkit-transition: 0s height, 0s padding-top, 0s padding-bottom;
+    transition: 0s height, 0s padding-top, 0s padding-bottom
+  .horizontal-collapse-transition 
+    -webkit-transition: 0s width, 0s padding-left, 0s padding-right;
+    transition: 0s width, 0s padding-left, 0s padding-right
+  .horizontal-collapse-transition .el-submenu__title .el-submenu__icon-arrow 
+    -webkit-transition: 0s;
+    transition: 0s;
+    opacity: 0 */
 </style>>
 
 </style>
@@ -241,11 +244,29 @@ export default {
         {
           orderId: "HG481",
           userName: "宋雨",
-          totalPrice: 220,
-          totalQuantity: 5,
+          totalPrice: 880,
+          totalQuantity: 8,
           goods: [
             {
               goodName: "多力葵花籽油",
+              unitPrice: 110,
+              count: 2,
+              singleTotalPrice: 220,
+            },
+            {
+              goodName: "芝麻糊",
+              unitPrice: 110,
+              count: 2,
+              singleTotalPrice: 220,
+            },
+            {
+              goodName: "鲁花花生油",
+              unitPrice: 110,
+              count: 2,
+              singleTotalPrice: 220,
+            },
+            {
+              goodName: "可口可乐",
               unitPrice: 110,
               count: 2,
               singleTotalPrice: 220,
@@ -273,7 +294,7 @@ export default {
           totalQuantity: 10,
           goods: [
             {
-              goodName: "",
+              goodName: "可口可乐",
               unitPrice: 110,
               count: 2,
               singleTotalPrice: 220,
@@ -281,6 +302,7 @@ export default {
           ],
         },
       ],
+      activeNames: -1,
     };
   },
   methods: {
